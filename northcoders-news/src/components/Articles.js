@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Col, Button, Icon } from "react-materialize";
+import { Card, Col, Button } from "react-materialize";
 import TopStory from "./TopStory";
 import Article from "./Article";
 import * as api from "../api";
@@ -17,6 +17,7 @@ class Articles extends Component {
       });
     });
   }
+
   render() {
     if (this.state.articles.length > 0) {
       const { users } = this.props;
@@ -31,6 +32,7 @@ class Articles extends Component {
             return (
               <Col key={article._id} m={6} s={12}>
                 <Card
+                  key={article.belongs_to._id}
                   className="blue-grey "
                   textClassName="white-text"
                   title={article.title}
@@ -38,12 +40,12 @@ class Articles extends Component {
                     <a>{article.votes} Votes</a>,
                     <a>{articleCreator[0].username} User</a>,
                     <Button
-                      id={`${article._id}`}
                       waves="light"
-                      tooltip="Click for Comments"
-                      onClick={this.handleClick}
+                      node="a"
+                      href={`/articles/${article._id}`}
                     >
-                      read more<Icon left>chat</Icon>
+                      {" "}
+                      read More{" "}
                     </Button>
                   ]}
                 >
@@ -57,7 +59,12 @@ class Articles extends Component {
       );
       const { article_id } = this.props.match.params;
       const displayArticleById = (
-        <Article articles={orderedArticles} article_id={article_id} />
+        <Article
+          articles={orderedArticles}
+          article_id={article_id}
+          incrementArticleVote={this.incrementArticleVote}
+          decrementArticleVote={this.decrementArticleVote}
+        />
       );
       const displayTopStory = (
         <TopStory articles={this.state.articles} users={this.props.users} />
@@ -90,6 +97,34 @@ class Articles extends Component {
       return <div />;
     }
   }
+
+  incrementArticleVote = article_id => {
+    const articles = [...this.state.articles];
+
+    if (articles.length > 0)
+      articles.map(article => {
+        if (article._id === article_id) {
+          article.votes = article.votes += 1;
+          this.setState({
+            articles: articles
+          });
+        }
+      });
+  };
+  decrementArticleVote = article_id => {
+    console.log(article_id);
+    const articles = [...this.state.articles];
+
+    if (articles.length > 0)
+      articles.map(article => {
+        if (article._id === article_id) {
+          article.votes = article.votes -= 1;
+          this.setState({
+            articles: articles
+          });
+        }
+      });
+  };
 }
 
 export default Articles;

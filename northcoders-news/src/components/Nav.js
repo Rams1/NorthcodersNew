@@ -26,14 +26,19 @@ class Nav extends Component {
           {topics.map((topic, i) => {
             const { slug, _id } = topic;
             return (
-              <li>
-                <NavLink to={`/topics/${_id}`}>{slug}</NavLink>
+              <li key={topic.slug}>
+                <NavLink key={topic._id} to={`/topics/${_id}`}>
+                  {slug}
+                </NavLink>
               </li>
             );
           })}
 
           <li>
             <NavLink to="/articles">Articles</NavLink>
+          </li>
+          <li>
+            <NavLink to="/users">Users</NavLink>
           </li>
         </Navbar>
       );

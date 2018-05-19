@@ -1,9 +1,13 @@
 import React, { Component } from "react";
-import { Card, Col, Button, Icon } from "react-materialize";
+import { Card, Col, Button } from "react-materialize";
 import * as api from "../api";
+
 class Article extends Component {
   state = {
-    comments: []
+    comments: [],
+    body: "",
+    userId: "5aff3600d3ab111b1ba1bc33",
+    vote: 0
   };
 
   componentDidMount() {
@@ -13,15 +17,20 @@ class Article extends Component {
       });
     });
   }
+
   render() {
-    const { articles, article_id, resetState } = this.props;
-    const comments = this.state.comments;
+    const { articles, article_id } = this.props;
+    const { comments } = this.state;
     if (articles.length > 0 && article_id !== undefined && comments) {
       const article = articles.find((article, index) => {
+        console.log(article);
         return article._id === article_id;
       });
       const commentArr = comments.filter(comment => {
-        return comment.belongs_to._id === article_id;
+        return (
+          comment.belongs_to._id === article_id ||
+          comment.belongs_to === article_id
+        );
       });
       return (
         <div>
@@ -32,15 +41,34 @@ class Article extends Component {
               title={article.title}
               actions={[
                 <a>{article.votes} Votes</a>,
-                <a>{`Created by ${article.created_by.username}`}</a>
+                <a>{`Created by ${article.created_by.username}`}</a>,
+                <Button
+                  id={article_id}
+                  floating
+                  className="red"
+                  waves="light"
+                  icon="arrow_upward"
+                  onClick={() => this.handleVoteUpClick(article_id)}
+                />,
+                <Button
+                  id={article_id}
+                  floating
+                  className="blue"
+                  waves="light"
+                  icon="arrow_downward"
+                  onClick={() => this.handleVoteDownClick(article_id)}
+                />
               ]}
             >
               {`${article.body}`}
             </Card>
-            <Button onClick={e => this.handleClick(e)} waves="light">
-              Comments<Icon left>chat</Icon>
-            </Button>
           </Col>
+          <div>
+            <form onSubmit={this.handleOnSubmit}>
+              <input onChange={this.handleChange} placeHolder="Comment here" />
+            </form>
+          </div>
+          <h3>Comments</h3>
           {commentArr.map((comment, index) => {
             return (
               <Col m={6} s={12}>
@@ -51,11 +79,22 @@ class Article extends Component {
                   actions={[
                     <a>{comment.votes} Votes</a>,
                     <Button
+                      id={comment._id}
                       floating
-                      large
                       className="red"
                       waves="light"
-                      icon="add"
+                      icon="arrow_upward"
+                      onClick={() => this.handleCommentVoteUpClick(comment._id)}
+                    />,
+                    <Button
+                      id={comment._id}
+                      floating
+                      className="blue"
+                      waves="light"
+                      icon="arrow_downward"
+                      onClick={() =>
+                        this.handleCommentVoteDownClick(comment._id)
+                      }
                     />
                   ]}
                 >
@@ -70,6 +109,69 @@ class Article extends Component {
       return <div>hi there </div>;
     }
   }
+  handleChange = e => {
+    this.setState({
+      body: e.target.value
+    });
+  };
+  handleOnSubmit = e => {
+    e.preventDefault();
+    const { article_id } = this.props;
+    const userId = this.state.userId;
+    const body = this.state.body;
+    api.PostAComment(body, article_id, userId).then(result => {
+      this.setState({
+        comments: [result.data.comment, ...this.state.comments]
+      });
+    });
+  };
+  handleVoteUpClick = article_id => {
+    api.alterVoteCount("up", article_id).then(result => {
+      console.log(result, "res");
+      this.props.incrementArticleVote(article_id);
+    });
+  };
+  handleVoteDownClick = article_id => {
+    api.alterVoteCount("down", article_id).then(result => {
+      this.props.decrementArticleVote(article_id);
+    });
+  };
+  handleCommentVoteUpClick = commentId => {
+    api.alterCommentVoteCount("up", commentId).then(result => {
+      this.incrementCommentVote(commentId);
+    });
+  };
+  handleCommentVoteDownClick = commentId => {
+    api.alterCommentVoteCount("down", commentId).then(result => {
+      this.decrementCommentVote(commentId);
+    });
+  };
+  incrementCommentVote = commentId => {
+    const comments = this.state.comments;
+
+    if (comments.length > 0)
+      comments.map(comment => {
+        if (comment._id === commentId) {
+          comment.votes++;
+          this.setState({
+            comment: comments
+          });
+        }
+      });
+  };
+  decrementCommentVote = commentId => {
+    const comments = this.state.comments;
+
+    if (comments.length > 0)
+      comments.map(comment => {
+        if (comment._id === commentId) {
+          comment.votes--;
+          this.setState({
+            comment: comments
+          });
+        }
+      });
+  };
 }
 
 export default Article;
