@@ -56,3 +56,13 @@ input::placeholder {
   float: right;
   margin-right: 2%;
 }
+
+.topic {
+  text-align: center;
+  margin-top: -50px;
+}
+
+.comment-input::placeholder {
+  color: lightblue;
+  padding-left: 3%;
+}

@@ -6,14 +6,15 @@ class Article extends Component {
   state = {
     comments: [],
     body: "",
-    userId: "5aff3600d3ab111b1ba1bc33",
+    userId: this.props.users[1]._id,
     vote: 0
   };
 
   componentDidMount() {
     api.getAllComments().then(commentData => {
       this.setState({
-        comments: commentData.data.comments
+        comments: commentData.data.comments,
+        users: this.props.users
       });
     });
   }
@@ -81,7 +82,11 @@ class Article extends Component {
           </Col>
           <div>
             <form onSubmit={this.handleOnSubmit}>
-              <input onChange={this.handleChange} placeholder="Comment here" />
+              <input
+                className="comment-input"
+                onChange={this.handleChange}
+                placeholder="comment here"
+              />
             </form>
           </div>
           <h3>Comments</h3>
@@ -175,7 +180,7 @@ class Article extends Component {
     api.deleteAComment(commentId).then(result => {
       const comments = [...this.state.comments];
       if (comments.length > 0) {
-        return comments.filter(comment => {
+        comments.filter(comment => {
           comment._id !== commentId;
         });
         console.log(comments);

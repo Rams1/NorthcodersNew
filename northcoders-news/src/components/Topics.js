@@ -16,6 +16,7 @@ class Topics extends Component {
       const topicsArts = api.filterTopics(articles, topicId);
       const display = (
         <div>
+          <h4 className="topic">{topicsArts[1].belongs_to.slug}</h4>
           <AddArticle
             titleSetState={this.titleSetState}
             bodySetState={this.bodySetState}
@@ -46,7 +47,6 @@ class Topics extends Component {
                   ]}
                 >
                   {article.body}
-                  {article.votes}
                 </Card>
               </Col>
             );

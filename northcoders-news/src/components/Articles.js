@@ -4,7 +4,6 @@ import TopStory from "./TopStory";
 import Article from "./Article";
 import * as api from "../api";
 import Topics from "./Topics";
-import "./Articles.css";
 import PT from "prop-types";
 class Articles extends Component {
   state = {
@@ -54,7 +53,6 @@ class Articles extends Component {
                   ]}
                 >
                   {article.body}
-                  {article.votes}
                 </Card>
               </Col>
             );
@@ -64,6 +62,7 @@ class Articles extends Component {
       const { article_id } = this.props.match.params;
       const displayArticleById = (
         <Article
+          users={this.props.users}
           articles={orderedArticles}
           article_id={article_id}
           incrementArticleVote={this.incrementArticleVote}

@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, Col } from "react-materialize";
-import "./User.css";
 import PT from "prop-types";
 
 const Users = props => {
