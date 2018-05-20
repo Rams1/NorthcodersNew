@@ -46,3 +46,13 @@ input::placeholder {
   height: 50px;
   width: 50px;
 }
+.top-article {
+  margin-left: 2%;
+}
+.jon {
+  display: flex;
+}
+.profile {
+  float: right;
+  margin-right: 2%;
+}

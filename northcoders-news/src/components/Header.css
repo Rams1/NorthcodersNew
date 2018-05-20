@@ -1,3 +1,9 @@
 .header-wrapper {
+  display: grids;
   background-color: lightblue;
+  grid-template-columns: 12, 1fr;
+}
+.login {
+  text-align: right;
+  padding-right: 3%;
 }

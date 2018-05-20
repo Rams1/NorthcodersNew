@@ -23,7 +23,7 @@ class App extends Component {
       return (
         <div className="App">
           <Nav />
-          <Header />
+          <Header users={this.state.users} />
           <Switch>
             <Route
               exact

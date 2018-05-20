@@ -31,7 +31,7 @@ export const PostAComment = (body, articleId, userId) => {
     data
   );
 };
-export const PostAnArticle = (title, body, topicId, userId) => {
+export const postAnArticle = (title, body, topicId, userId) => {
   const data = {
     title: title,
     body: body,
@@ -55,4 +55,12 @@ export const alterCommentVoteCount = (vote, commentId) => {
   );
 };
 
-export const handleVoteClick = (article_id, vote) => {};
+export const deleteAComment = commentId => {
+  return axios.delete(
+    `https://northcoders-news1.herokuapp.com/api/comments/${commentId}`
+  );
+};
+
+export const handleChange = (e, func) => {
+  func(e);
+};

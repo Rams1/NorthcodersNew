@@ -4,7 +4,8 @@ import TopStory from "./TopStory";
 import Article from "./Article";
 import * as api from "../api";
 import Topics from "./Topics";
-
+import "./Articles.css";
+import PT from "prop-types";
 class Articles extends Component {
   state = {
     articles: []
@@ -27,13 +28,16 @@ class Articles extends Component {
         <div className="all-articles-wrapper">
           {orderedArticles.map((article, index) => {
             const articleCreator = users.filter(user => {
-              return user._id === article.created_by._id;
+              return (
+                user._id === article.created_by._id ||
+                user._id === article.created_by
+              );
             });
             return (
               <Col key={article._id} m={6} s={12}>
                 <Card
                   key={article.belongs_to._id}
-                  className="blue-grey "
+                  className="blue-grey"
                   textClassName="white-text"
                   title={article.title}
                   actions={[
@@ -76,10 +80,8 @@ class Articles extends Component {
           articles={orderedArticles}
           topicId={topic_id}
           users={this.props.users}
+          addArticleToArr={this.addArticleToArr}
         />
-      );
-      const getCommentsForAnArticle = (
-        <Article articles={orderedArticles} article_id={article_id} />
       );
 
       const render =
@@ -125,6 +127,13 @@ class Articles extends Component {
         }
       });
   };
+  addArticleToArr = newArticle => {
+    this.setState({
+      articles: [newArticle, ...this.state.articles]
+    });
+  };
 }
-
+Articles.propTypes = {
+  users: PT.array.isRequired
+};
 export default Articles;

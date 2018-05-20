@@ -1,5 +1,7 @@
 import React from "react";
 import { Card, Col } from "react-materialize";
+import "./User.css";
+import PT from "prop-types";
 
 const Users = props => {
   const users = props.users;
@@ -10,6 +12,8 @@ const Users = props => {
         return (
           <Col m={7} s={12}>
             <Card
+              className="blue-grey"
+              textClassName="white-text"
               horizontal
               header={<img src={user.avatar_url} alt="user-pic" />}
               actions={[
@@ -26,4 +30,7 @@ const Users = props => {
   );
 };
 
+Users.propTypes = {
+  users: PT.array.isRequired
+};
 export default Users;

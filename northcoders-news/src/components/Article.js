@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Card, Col, Button } from "react-materialize";
 import * as api from "../api";
-
+import PT from "prop-types";
 class Article extends Component {
   state = {
     comments: [],
@@ -17,13 +17,29 @@ class Article extends Component {
       });
     });
   }
+  componentDidUpdate() {
+    api.getAllComments().then(commentsArr => {
+      const comments = commentsArr.data.comments;
+
+      if (JSON.stringify(comments) !== JSON.stringify(this.state.comments)) {
+        const sortedComments = comments.sort(
+          (a, b) => b.created_at - a.created_at
+        );
+        if (
+          JSON.stringify(sortedComments) !== JSON.stringify(this.state.comments)
+        )
+          this.setState({
+            comments: sortedComments
+          });
+      }
+    });
+  }
 
   render() {
     const { articles, article_id } = this.props;
     const { comments } = this.state;
     if (articles.length > 0 && article_id !== undefined && comments) {
       const article = articles.find((article, index) => {
-        console.log(article);
         return article._id === article_id;
       });
       const commentArr = comments.filter(comment => {
@@ -65,7 +81,7 @@ class Article extends Component {
           </Col>
           <div>
             <form onSubmit={this.handleOnSubmit}>
-              <input onChange={this.handleChange} placeHolder="Comment here" />
+              <input onChange={this.handleChange} placeholder="Comment here" />
             </form>
           </div>
           <h3>Comments</h3>
@@ -75,7 +91,7 @@ class Article extends Component {
                 <Card
                   className="blue-grey "
                   textClassName="white-text"
-                  title={comment.created_by.username}
+                  title={comment.created_by.username || comment.created_by}
                   actions={[
                     <a>{comment.votes} Votes</a>,
                     <Button
@@ -100,6 +116,14 @@ class Article extends Component {
                 >
                   {`${comment.body}`}
                 </Card>
+                <Button
+                  id={comment._id}
+                  floating
+                  className="orange"
+                  waves="light"
+                  icon="delete_forever"
+                  onClick={() => this.handleDeleteClick(comment._id)}
+                />
               </Col>
             );
           })}
@@ -120,6 +144,7 @@ class Article extends Component {
     const userId = this.state.userId;
     const body = this.state.body;
     api.PostAComment(body, article_id, userId).then(result => {
+      console.log(result.data.comment);
       this.setState({
         comments: [result.data.comment, ...this.state.comments]
       });
@@ -144,6 +169,20 @@ class Article extends Component {
   handleCommentVoteDownClick = commentId => {
     api.alterCommentVoteCount("down", commentId).then(result => {
       this.decrementCommentVote(commentId);
+    });
+  };
+  handleDeleteClick = commentId => {
+    api.deleteAComment(commentId).then(result => {
+      const comments = [...this.state.comments];
+      if (comments.length > 0) {
+        return comments.filter(comment => {
+          comment._id !== commentId;
+        });
+        console.log(comments);
+        this.setState({
+          comments: comments
+        });
+      }
     });
   };
   incrementCommentVote = commentId => {
@@ -173,5 +212,12 @@ class Article extends Component {
       });
   };
 }
+
+Article.propTypes = {
+  articles: PT.array.isRequired,
+  article_id: PT.string.isRequired,
+  decrementArticleVote: PT.func.isRequired,
+  incrementArticleVote: PT.func.isRequired
+};
 
 export default Article;
