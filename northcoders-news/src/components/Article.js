@@ -49,91 +49,95 @@ class Article extends Component {
           comment.belongs_to === article_id
         );
       });
-      return (
-        <div>
-          <Col m={6} s={12}>
-            <Card
-              className="blue-grey "
-              textClassName="white-text"
-              title={article.title}
-              actions={[
-                <a>{article.votes} Votes</a>,
-                <a>{`Created by ${article.created_by.username}`}</a>,
-                <Button
-                  id={article_id}
-                  floating
-                  className="red"
-                  waves="light"
-                  icon="arrow_upward"
-                  onClick={() => this.handleVoteUpClick(article_id)}
-                />,
-                <Button
-                  id={article_id}
-                  floating
-                  className="blue"
-                  waves="light"
-                  icon="arrow_downward"
-                  onClick={() => this.handleVoteDownClick(article_id)}
-                />
-              ]}
-            >
-              {`${article.body}`}
-            </Card>
-          </Col>
+      if (this.state.userId.length > 0)
+        return (
           <div>
-            <form onSubmit={this.handleOnSubmit}>
-              <input
-                className="comment-input"
-                onChange={this.handleChange}
-                placeholder="comment here"
-              />
-            </form>
-          </div>
-          <h3>Comments</h3>
-          {commentArr.map((comment, index) => {
-            return (
-              <Col m={6} s={12}>
-                <Card
-                  className="blue-grey "
-                  textClassName="white-text"
-                  title={comment.created_by.username || comment.created_by}
-                  actions={[
-                    <a>{comment.votes} Votes</a>,
-                    <Button
-                      id={comment._id}
-                      floating
-                      className="red"
-                      waves="light"
-                      icon="arrow_upward"
-                      onClick={() => this.handleCommentVoteUpClick(comment._id)}
-                    />,
-                    <Button
-                      id={comment._id}
-                      floating
-                      className="blue"
-                      waves="light"
-                      icon="arrow_downward"
-                      onClick={() =>
-                        this.handleCommentVoteDownClick(comment._id)
-                      }
-                    />
-                  ]}
-                >
-                  {`${comment.body}`}
-                </Card>
-                <Button
-                  id={comment._id}
-                  floating
-                  className="orange"
-                  waves="light"
-                  icon="delete_forever"
-                  onClick={() => this.handleDeleteClick(comment._id)}
+            <Col m={6} s={12}>
+              <Card
+                className="blue-grey "
+                textClassName="white-text"
+                title={article.title}
+                actions={[
+                  <a>{article.votes} Votes</a>,
+                  <a>{`Created by ${article.created_by.username}`}</a>,
+                  <Button
+                    id={article_id}
+                    floating
+                    className="red"
+                    waves="light"
+                    icon="arrow_upward"
+                    onClick={() => this.handleVoteUpClick(article_id)}
+                  />,
+                  <Button
+                    id={article_id}
+                    floating
+                    className="blue"
+                    waves="light"
+                    icon="arrow_downward"
+                    onClick={() => this.handleVoteDownClick(article_id)}
+                  />
+                ]}
+              >
+                {`${article.body}`}
+              </Card>
+            </Col>
+            <div>
+              <form onSubmit={this.handleOnSubmit}>
+                <input
+                  className="comment-input"
+                  onChange={this.handleChange}
+                  placeholder="comment here"
                 />
-              </Col>
-            );
-          })}
-        </div>
-      );
+              </form>
+            </div>
+            <h3>Comments</h3>
+            {commentArr.map((comment, index) => {
+              console.log(comment);
+              return (
+                <Col m={6} s={12}>
+                  <Card
+                    className="blue-grey "
+                    textClassName="white-text"
+                    title={comment.created_by.username || comment.created_by}
+                    actions={[
+                      <a>{comment.votes} Votes</a>,
+                      <Button
+                        id={comment._id}
+                        floating
+                        className="red"
+                        waves="light"
+                        icon="arrow_upward"
+                        onClick={() =>
+                          this.handleCommentVoteUpClick(comment._id)
+                        }
+                      />,
+                      <Button
+                        id={comment._id}
+                        floating
+                        className="blue"
+                        waves="light"
+                        icon="arrow_downward"
+                        onClick={() =>
+                          this.handleCommentVoteDownClick(comment._id)
+                        }
+                      />
+                    ]}
+                  >
+                    {`${comment.body}`}
+                  </Card>
+                  <Button
+                    id={comment._id}
+                    floating
+                    className="orange"
+                    waves="light"
+                    icon="delete_forever"
+                    onClick={() => this.handleDeleteClick(comment._id)}
+                  />
+                </Col>
+              );
+            })}
+          </div>
+        );
     } else {
       return <div>hi there </div>;
     }
@@ -147,6 +151,7 @@ class Article extends Component {
     e.preventDefault();
     const { article_id } = this.props;
     const userId = this.state.userId;
+    console.log(userId);
     const body = this.state.body;
     api.PostAComment(body, article_id, userId).then(result => {
       console.log(result.data.comment);
