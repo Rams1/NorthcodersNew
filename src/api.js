@@ -9,6 +9,14 @@ export function filterTopics(arr, topicId) {
     return article.belongs_to._id === topicId;
   });
 }
+export const voteOnArticle =  (article_id, vote) => {
+  return axios
+      .put(`https://northcoders-news1.herokuapp.com/api/articles/${article_id}?vote=${vote}`)
+      .then(res => {
+        res.data.article})
+      .catch(console.log)
+
+}
 
 export const getAllArticles = () => {
   return axios.get("https://northcoders-news1.herokuapp.com/api/articles");

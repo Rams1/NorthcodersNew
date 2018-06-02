@@ -65,7 +65,7 @@ class Articles extends Component {
           users={this.props.users}
           articles={orderedArticles}
           article_id={article_id}
-          incrementArticleVote={this.incrementArticleVote}
+          ArticleVote={this.ArticleVote}
           decrementArticleVote={this.decrementArticleVote}
         />
       );
@@ -112,14 +112,12 @@ class Articles extends Component {
         }
       });
   };
-  decrementArticleVote = article_id => {
-    console.log(article_id);
+  ArticleVote = (article_id, num) => {
     const articles = [...this.state.articles];
-
     if (articles.length > 0)
       articles.map(article => {
         if (article._id === article_id) {
-          article.votes = article.votes -= 1;
+          article.votes += num;
           this.setState({
             articles: articles
           });

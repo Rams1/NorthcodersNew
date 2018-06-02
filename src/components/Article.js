@@ -66,7 +66,7 @@ class Article extends Component {
                     className="red"
                     waves="light"
                     icon="arrow_upward"
-                    onClick={() => this.handleVoteUpClick(article_id)}
+                    onClick={() => this.handleVote(article_id, "up")}
                   />,
                   <Button
                     id={article_id}
@@ -74,7 +74,7 @@ class Article extends Component {
                     className="blue"
                     waves="light"
                     icon="arrow_downward"
-                    onClick={() => this.handleVoteDownClick(article_id)}
+                    onClick={() => this.handleVote(article_id, "down")}
                   />
                 ]}
               >
@@ -92,7 +92,6 @@ class Article extends Component {
             </div>
             <h3>Comments</h3>
             {commentArr.map((comment, index) => {
-              console.log(comment);
               return (
                 <Col m={6} s={12}>
                   <Card
@@ -160,17 +159,6 @@ class Article extends Component {
       });
     });
   };
-  handleVoteUpClick = article_id => {
-    api.alterVoteCount("up", article_id).then(result => {
-      console.log(result, "res");
-      this.props.incrementArticleVote(article_id);
-    });
-  };
-  handleVoteDownClick = article_id => {
-    api.alterVoteCount("down", article_id).then(result => {
-      this.props.decrementArticleVote(article_id);
-    });
-  };
   handleCommentVoteUpClick = commentId => {
     api.alterCommentVoteCount("up", commentId).then(result => {
       this.incrementCommentVote(commentId);
@@ -186,7 +174,7 @@ class Article extends Component {
       const comments = [...this.state.comments];
       if (comments.length > 0) {
         comments.filter(comment => {
-          comment._id !== commentId;
+          return comment._id !== commentId;
         });
         console.log(comments);
         this.setState({
@@ -194,6 +182,17 @@ class Article extends Component {
         });
       }
     });
+  };
+  alreadyVoted = false;
+
+  handleVote = (articleId, direction) => {
+    const vote = direction === "up" ? 1 : -1;
+    if (!this.alreadyVoted) {
+      api.voteOnArticle(articleId, direction).then(() => {
+        this.props.ArticleVote(articleId, vote);
+      });
+      this.alreadyVoted = true;
+    }
   };
   incrementCommentVote = commentId => {
     const comments = this.state.comments;
