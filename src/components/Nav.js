@@ -3,6 +3,8 @@ import { NavLink } from "react-router-dom";
 import { Navbar } from "react-materialize";
 import "../Nav.css";
 import * as api from "../api";
+import { Loading } from "./";
+
 class Nav extends Component {
   state = {
     topics: []
@@ -18,7 +20,7 @@ class Nav extends Component {
     const topics = this.state.topics;
     if (topics.length > 0) {
       return (
-        <Navbar className="navbar" brand="Northcoders News" left>
+        <Navbar className="navbar" left>
           <li>
             <NavLink to="/">Home</NavLink>
           </li>
@@ -43,7 +45,7 @@ class Nav extends Component {
         </Navbar>
       );
     } else {
-      return null;
+      return <Loading />;
     }
   }
 }

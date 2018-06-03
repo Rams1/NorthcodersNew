@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Col, Button } from "react-materialize";
 import PT from "prop-types";
+import { Loading } from "./";
 
 const TopStory = ({ articles, users }) => {
   const sorted = articles.sort((a, b) => {
@@ -36,23 +37,15 @@ const TopStory = ({ articles, users }) => {
                   </Button>
                 ]}
               >
-                {`${articles[articles.length - 1].body}
-              
-            ${userObj.name}`}
+                {`${articles[articles.length - 1].body.slice(0 - 199)}   ...`}
               </Card>
             </Col>
           </div>
         </div>
-        <div className="profile">
-          <h2>Profile</h2>
-          <li>{users[1].name}</li>
-          <li>{users[1].username}</li>
-          <img src={users[1].avatar_url} alt="userAvatar" />
-        </div>
       </div>
     );
   } else {
-    return <div />;
+    return <Loading />;
   }
 };
 

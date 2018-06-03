@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Card, Col, Button } from "react-materialize";
 import * as api from "../api";
-import { TopStory, Article, Topics } from "./";
+import { TopStory, Article, Topics, Loading } from "./";
 import PT from "prop-types";
 class Articles extends Component {
   state = {
@@ -93,7 +93,7 @@ class Articles extends Component {
                 : null;
       return render;
     } else {
-      return <div />;
+      return <Loading />;
     }
   }
 

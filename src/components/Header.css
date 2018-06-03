@@ -6,4 +6,19 @@
 .login {
   text-align: right;
   padding-right: 3%;
+  grid-column: 12;
+}
+
+.header-user-pic {
+  border: 1px solid #ddd; /* Gray border */
+  border-radius: 4px; /* Rounded border */
+  padding: 5px; /* Some padding */
+  width: 80px;
+  grid-column: 12;
+}
+
+.title-wrapper {
+  padding-bottom: 2%;
+  margin-top: -50px;
+  grid-column: 1/10;
 }

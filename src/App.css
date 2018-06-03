@@ -47,7 +47,7 @@ input::placeholder {
   width: 50px;
 }
 .top-article {
-  margin-left: 2%;
+  margin: 2%;
 }
 .jon {
   display: flex;
@@ -65,4 +65,8 @@ input::placeholder {
 .comment-input::placeholder {
   color: lightblue;
   padding-left: 3%;
+}
+
+.blue-grey {
+  margin: 2%;
 }

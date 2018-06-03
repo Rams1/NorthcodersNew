@@ -12,10 +12,22 @@ class Topics extends Component {
   };
 
   componentDidMount() {
-    const articles = this.props.articles;
+    const articles = this.props.articles.sort((a, b) => a.votes - b.votes);
     this.setState({
       articles: articles
     });
+  }
+  componentDidUpdate() {
+    if (this.state.articles.length !== this.props.articles.length) {
+      api.getAllArticles().then(articlesData => {
+        let articles = articlesData.data.articles.sort(
+          (a, b) => a.votes - b.votes
+        );
+        this.setState({
+          articles: articles
+        });
+      });
+    }
   }
   render() {
     if (this.state.articles.length > 1 || this.props.topicId === String) {
@@ -32,6 +44,7 @@ class Topics extends Component {
             onArticleSubmission={this.onArticleSubmission}
           />
           {topicsArts.map((article, index) => {
+            //const snippet = `${article.body.slice(0, 180)}...`;
             const articleCreator = users.filter(user => {
               return user._id === article.created_by._id;
             });
@@ -39,7 +52,7 @@ class Topics extends Component {
             return (
               <Col key={article._id} m={6} s={12}>
                 <Card
-                  className="blue-grey "
+                  className="blue-grey"
                   textClassName="white-text"
                   title={article.title}
                   actions={[
@@ -55,7 +68,7 @@ class Topics extends Component {
                     </Button>
                   ]}
                 >
-                  {article.body}
+                  {`${article.body.slice(0, 250)}...`}
                 </Card>
               </Col>
             );

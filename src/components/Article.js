@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Card, Col, Button } from "react-materialize";
 import * as api from "../api";
 import PT from "prop-types";
-import { VoteButton } from "./";
+import { VoteButton, Loading } from "./";
 class Article extends Component {
   state = {
     comments: [],
@@ -70,6 +70,7 @@ class Article extends Component {
                 actions={[
                   <a>{article.votes} Votes</a>,
                   <a>{`Created by ${article.created_by.username}`}</a>,
+                  <div />,
                   <VoteButton
                     id={article._id}
                     colour="red"
@@ -139,7 +140,7 @@ class Article extends Component {
           </div>
         );
     } else {
-      return <div>hi there </div>;
+      return <Loading />;
     }
   }
   handleChange = e => {
@@ -213,8 +214,7 @@ class Article extends Component {
 Article.propTypes = {
   articles: PT.array.isRequired,
   article_id: PT.string.isRequired,
-  decrementArticleVote: PT.func.isRequired,
-  incrementArticleVote: PT.func.isRequired
+  ArticleVote: PT.func.isRequired
 };
 
 export default Article;

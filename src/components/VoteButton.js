@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "react-materialize";
+import PT from "prop-types";
 
 const VoteButton = props => {
   const { id, colour, func, direction, icon } = props;
@@ -13,6 +14,14 @@ const VoteButton = props => {
       onClick={() => func(id, direction)}
     />
   );
+};
+
+VoteButton.propTypes = {
+  id: PT.string.isRequired,
+  colour: PT.string.isRequired,
+  func: PT.func.isRequired,
+  direction: PT.string.isRequired,
+  icon: PT.string.isRequired
 };
 
 export default VoteButton;
