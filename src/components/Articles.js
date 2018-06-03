@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Card, Col, Button } from "react-materialize";
-import TopStory from "./TopStory";
-import Article from "./Article";
 import * as api from "../api";
-import Topics from "./Topics";
+import { TopStory, Article, Topics } from "./";
 import PT from "prop-types";
 class Articles extends Component {
   state = {
@@ -99,31 +97,18 @@ class Articles extends Component {
     }
   }
 
-  incrementArticleVote = article_id => {
-    const articles = [...this.state.articles];
-
-    if (articles.length > 0)
-      articles.map(article => {
-        if (article._id === article_id) {
-          article.votes = article.votes += 1;
-          this.setState({
-            articles: articles
-          });
-        }
-      });
-  };
   ArticleVote = (article_id, num) => {
     const articles = [...this.state.articles];
-    if (articles.length > 0)
-      articles.map(article => {
-        if (article._id === article_id) {
-          article.votes += num;
-          this.setState({
-            articles: articles
-          });
-        }
+    if (articles.length > 0) {
+      articles.forEach(article => {
+        if (article._id === article_id) article.votes += num;
       });
+      this.setState({
+        articles: articles
+      });
+    }
   };
+
   addArticleToArr = newArticle => {
     this.setState({
       articles: [newArticle, ...this.state.articles]

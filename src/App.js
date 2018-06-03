@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import Articles from "./components/Articles";
-import Users from "./components/Users";
-import Nav from "./components/Nav";
-import Header from "./components/Header";
+import { Articles, Users, Nav, Header } from "./components";
 import { Route, Switch } from "react-router-dom";
 import * as api from "./api";
 

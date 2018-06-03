@@ -2,17 +2,26 @@ import React, { Component } from "react";
 import * as api from "../api";
 import { Card, Col, Button } from "react-materialize";
 import PT from "prop-types";
-import AddArticle from "./AddArticle";
+import { AddArticle, Loading } from "./";
 
 class Topics extends Component {
   state = {
     title: "",
-    body: ""
+    body: "",
+    articles: []
   };
+
+  componentDidMount() {
+    const articles = this.props.articles;
+    this.setState({
+      articles: articles
+    });
+  }
   render() {
-    if (this.props.articles || this.props.topicId === String) {
-      const { articles, topicId, users } = this.props;
-      console.log(topicId);
+    if (this.state.articles.length > 1 || this.props.topicId === String) {
+      const { topicId, users } = this.props;
+      const { articles } = this.state;
+      console.log(articles);
       const topicsArts = api.filterTopics(articles, topicId);
       const display = (
         <div>
@@ -56,6 +65,8 @@ class Topics extends Component {
 
       const render = topicsArts.length > 0 ? display : <div />;
       return render;
+    } else {
+      return <Loading />;
     }
   }
   bodySetState = e => {
@@ -80,8 +91,11 @@ class Topics extends Component {
         .then(articleData => {
           console.log(addArticleToArr);
           console.log(articleData.data.article);
-          const article = articleData.data.article;
-          if (article.title.length > 0) addArticleToArr(article);
+          const newArticle = articleData.data.article;
+          if (newArticle.title.length > 0)
+            this.setState({
+              articles: [newArticle, ...this.state.articles]
+            });
         });
     }
   };

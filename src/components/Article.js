@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Card, Col, Button } from "react-materialize";
 import * as api from "../api";
 import PT from "prop-types";
+import { VoteButton } from "./";
 class Article extends Component {
   state = {
     comments: [],
@@ -12,26 +13,35 @@ class Article extends Component {
 
   componentDidMount() {
     api.getAllComments().then(commentData => {
+      const comments = commentData.data.comments.sort(
+        (a, b) => b.created_at - a.created_at
+      );
       this.setState({
-        comments: commentData.data.comments,
+        comments: comments,
         users: this.props.users
       });
     });
   }
   componentDidUpdate() {
-    api.getAllComments().then(commentsArr => {
-      const comments = commentsArr.data.comments;
+    const articleComments = this.state.comments
+      .filter(comment => {
+        return comment.belongs_to._id === this.props.article_id;
+      })
+      .sort((a, b) => b.created_at - a.created_at);
+    api.getArticleComments(this.props.article_id).then(res => {
+      let artComs = res.data.comments.sort(
+        (a, b) => b.created_at - a.created_at
+      );
 
-      if (JSON.stringify(comments) !== JSON.stringify(this.state.comments)) {
-        const sortedComments = comments.sort(
-          (a, b) => b.created_at - a.created_at
-        );
-        if (
-          JSON.stringify(sortedComments) !== JSON.stringify(this.state.comments)
-        )
+      if (JSON.stringify(artComs) !== JSON.stringify(articleComments)) {
+        api.getAllComments().then(commentData => {
+          let comments = commentData.data.comments.sort(
+            (a, b) => b.created_at - a.created_at
+          );
           this.setState({
-            comments: sortedComments
+            comments: comments
           });
+        });
       }
     });
   }
@@ -60,21 +70,19 @@ class Article extends Component {
                 actions={[
                   <a>{article.votes} Votes</a>,
                   <a>{`Created by ${article.created_by.username}`}</a>,
-                  <Button
-                    id={article_id}
-                    floating
-                    className="red"
-                    waves="light"
+                  <VoteButton
+                    id={article._id}
+                    colour="red"
+                    func={this.handleVote}
+                    direction="up"
                     icon="arrow_upward"
-                    onClick={() => this.handleVote(article_id, "up")}
                   />,
-                  <Button
-                    id={article_id}
-                    floating
-                    className="blue"
-                    waves="light"
+                  <VoteButton
+                    id={article._id}
+                    colour="blue"
+                    func={this.handleVote}
+                    direction="down"
                     icon="arrow_downward"
-                    onClick={() => this.handleVote(article_id, "down")}
                   />
                 ]}
               >
@@ -100,37 +108,30 @@ class Article extends Component {
                     title={comment.created_by.username || comment.created_by}
                     actions={[
                       <a>{comment.votes} Votes</a>,
-                      <Button
+                      <VoteButton
                         id={comment._id}
-                        floating
-                        className="red"
-                        waves="light"
+                        colour="red"
+                        func={this.handleCommentVoteClick}
+                        direction="up"
                         icon="arrow_upward"
-                        onClick={() =>
-                          this.handleCommentVoteUpClick(comment._id)
-                        }
                       />,
-                      <Button
+                      <VoteButton
                         id={comment._id}
-                        floating
-                        className="blue"
-                        waves="light"
+                        colour="blue"
+                        func={this.handleCommentVoteClick}
+                        direction="down"
                         icon="arrow_downward"
-                        onClick={() =>
-                          this.handleCommentVoteDownClick(comment._id)
-                        }
                       />
                     ]}
                   >
                     {`${comment.body}`}
                   </Card>
-                  <Button
+                  <VoteButton
                     id={comment._id}
-                    floating
-                    className="orange"
-                    waves="light"
+                    colour="orange"
+                    func={this.handleDeleteClick}
+                    direction=""
                     icon="delete_forever"
-                    onClick={() => this.handleDeleteClick(comment._id)}
                   />
                 </Col>
               );
@@ -159,16 +160,12 @@ class Article extends Component {
       });
     });
   };
-  handleCommentVoteUpClick = commentId => {
-    api.alterCommentVoteCount("up", commentId).then(result => {
-      this.incrementCommentVote(commentId);
+  handleCommentVoteClick = (commentId, direction) => {
+    api.alterCommentVoteCount(direction, commentId).then(result => {
+      this.incrementCommentVote(commentId, direction);
     });
   };
-  handleCommentVoteDownClick = commentId => {
-    api.alterCommentVoteCount("down", commentId).then(result => {
-      this.decrementCommentVote(commentId);
-    });
-  };
+
   handleDeleteClick = commentId => {
     api.deleteAComment(commentId).then(result => {
       const comments = [...this.state.comments];
@@ -183,40 +180,31 @@ class Article extends Component {
       }
     });
   };
-  alreadyVoted = false;
+  alreadyVotedOnArticle = false;
 
   handleVote = (articleId, direction) => {
     const vote = direction === "up" ? 1 : -1;
-    if (!this.alreadyVoted) {
+    if (!this.alreadyVotedOnArticle) {
       api.voteOnArticle(articleId, direction).then(() => {
         this.props.ArticleVote(articleId, vote);
       });
-      this.alreadyVoted = true;
+      this.alreadyVotedOnArticle = true;
     }
   };
-  incrementCommentVote = commentId => {
-    const comments = this.state.comments;
 
-    if (comments.length > 0)
+  alreadyVotedOnComment = false;
+
+  incrementCommentVote = (commentId, direction) => {
+    const comments = [...this.state.comments];
+    const vote = direction === "up" ? 1 : -1;
+    if (comments.length > 0 && !this.alreadyVotedOnComment)
       comments.map(comment => {
         if (comment._id === commentId) {
-          comment.votes++;
+          comment.votes += vote;
           this.setState({
             comment: comments
           });
-        }
-      });
-  };
-  decrementCommentVote = commentId => {
-    const comments = this.state.comments;
-
-    if (comments.length > 0)
-      comments.map(comment => {
-        if (comment._id === commentId) {
-          comment.votes--;
-          this.setState({
-            comment: comments
-          });
+          this.alreadyVotedOnComment = true;
         }
       });
   };
