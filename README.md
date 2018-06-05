@@ -24,7 +24,7 @@ git --version
 Clone my repository
 
 ```
-git clone <placeholder>
+git clone https://github.com/Rams1/NorthcodersNew.git
 ```
 
 Navigate in to the cloned repository using the cd command and then install all the dependencies:
@@ -38,3 +38,16 @@ Now follow the command below to run the app in your browser
 ```
 npm start
 ```
+You should now be running on localhost:3000
+
+### Built with
+Heroku - The hosting website for the application.
+###
+Nodejs - The language used in conjunction with Nodejs to build the 
+website.
+###
+Reactjs- The framework used in conjunction with Nodejs to build the website.
+###
+Author
+** Ramsey Mahgoub ** - gitHub - Rams1
+
